@@ -82,6 +82,10 @@ def model_ONE_data(path: str) -> pd.DataFrame:
 
     # Cleaning extra characters.
     data.iloc[:, 0] = data.iloc[:, 0].astype(str).str.replace('*', '', regex=False).astype(float)
+
+    # Standardizing the column names.
+    columns = ['año' if 'año' in column.lower() else column.lower() for column in  data.columns]
+    data.columns = columns
     
     return data
 
