@@ -96,7 +96,7 @@ def model_CNSS_data(paths: List[str]) -> pd.DataFrame:
         3. Creates a new "fecha" column by combining "año" and "mes" as a string.
         4. Drops the original "año" and "mes" columns after creating "fecha".
         5. Merges all processed dataframes on the "fecha" column.
-        6. Splits "fecha" into separate "anio" (year) and "mes" (month) columns.
+        6. Splits "fecha" into separate "año" (year) and "mes" (month) columns.
         7. Drops the "fecha" column before returning the final processed dataframe.
 
         Parameters:
@@ -105,7 +105,7 @@ def model_CNSS_data(paths: List[str]) -> pd.DataFrame:
 
         Returns:
         pd.DataFrame
-            A cleaned and merged dataframe with standardized column names and separate "anio" and "mes" columns.
+            A cleaned and merged dataframe with standardized column names and separate "año" and "mes" columns.
 
         Raises:
         ValueError:
@@ -146,7 +146,7 @@ def model_CNSS_data(paths: List[str]) -> pd.DataFrame:
         data = pd.merge(data, dataframe, on='fecha')
 
     # Splitting the date into year and month.
-    data[['anio', 'mes']] = data['fecha'].str.split(' ', expand=True, n=1)
+    data[['año', 'mes']] = data['fecha'].str.split(' ', expand=True, n=1)
 
     # Dropping "date" columns.
     data.drop('fecha', axis=1, inplace=True)
