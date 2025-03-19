@@ -215,7 +215,7 @@ def model_all_data() -> dict:
 
         # Creating the file directory where the data will be stored if there's not any.
         if institution.lower() not in os.listdir('data/processed'):
-            os.mkdir(os.path.join('../data/processed', institution.lower()))
+            os.mkdir(os.path.join('data/processed', institution.lower()))
         
         # Saving the data in its directory.
         for dataframe in dataframes:
