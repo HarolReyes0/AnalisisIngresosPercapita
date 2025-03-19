@@ -29,10 +29,16 @@ def model_ONE_data(path: str) -> pd.DataFrame:
     try:
         data = pd.read_excel(path, engine='openpyxl')
     except ValueError:
-        data = pd.read_csv(path)
+        data = pd.read_csv(path).reset_index(drop=True)
+
+    # Finding the start of our data.
+    try:
+        index_ = list(data.iloc[:,0].str.lower()).index('años')
+    except ValueError:
+        index_ = list(data.iloc[:,0].str.lower()).index('año')
 
     # Filtering the unwanted rows
-    data = data.iloc[2:-3]
+    data = data.iloc[index_:-3]
     
     # Iterating over the data rows.
     for i in range(data.shape[0]):
@@ -52,6 +58,29 @@ def model_ONE_data(path: str) -> pd.DataFrame:
         
     # Transposing and filtering the data.
     data = data.iloc[:, 1:].T.reset_index(drop=True)
+
+    # Obtaining the column headers.
+    headers = data.iloc[0]
+    # Replacing the headers.
+    data.columns = headers
+
+    # # Dropping unwanted rows.
+    data.drop(labels=0, inplace=True)
+    
+    # Filling the missing years.
+    data.iloc[:, 0] = data.iloc[:, 0].fillna(method='ffill')
+    
+    # Filtering rows.
+    data = data[(data.iloc[:, 1].str.strip() == 'Cuarto trimestre') | (data.iloc[:, 1].isna())]
+
+    # Dropping unwanted columns
+    try:
+        data.drop('Años (nan) 1', axis=1, inplace=True)
+    except KeyError:
+        data.drop('Año (nan) 1', axis=1, inplace=True)
+
+    # Cleaning extra characters.
+    data.iloc[:, 0] = data.iloc[:, 0].astype(str).str.replace('*', '', regex=False).astype(float)
     
     return data
 
