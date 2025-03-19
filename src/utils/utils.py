@@ -193,6 +193,35 @@ def model_all_data() -> dict:
 
     return data_modeled
 
+    def save_the_data() -> None:
+    """
+        Saves modeled data into CSV files organized by institution.
+
+        This function retrieves the modeled data from `model_all_data()`, 
+        iterates over each institution's data, and saves it in a structured 
+        directory under `../data/processed/`. If the directory for an institution 
+        does not exist, it is created. The data is stored as CSV files named 
+        sequentially.
+
+        Raises:
+            FileNotFoundError: If the base directory '../data/processed' does not exist.
+            OSError: If there is an issue creating directories or writing files.
+    """
+    data_modeled = model_all_data()
+
+    # Iterating over all the modeled files.
+    for institution, dataframes in data_modeled.items():
+        i = 0
+
+        # Creating the file directory where the data will be stored if there's not any.
+        if institution.lower() not in os.listdir('../data/processed'):
+            os.mkdir(os.path.join('../data/processed', institution.lower()))
+        
+        # Saving the data in its directory.
+        for dataframe in dataframes:
+            dataframe.to_csv(f'../data/processed/{institution.lower()}/{institution.lower()} {i}.csv')
+            i += 1
+
 if __name__ == '__main__':
     ONE_data_path = 'data/Raw Data/afiliados-número-cápitas-cápitas-pagadas-sfs-según-régimen-2005-2023.xlsx'
     
