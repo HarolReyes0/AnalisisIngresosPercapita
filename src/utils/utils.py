@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from typing import List
 
 def model_ONE_data(path: str) -> pd.DataFrame:
     """
@@ -13,7 +14,7 @@ def model_ONE_data(path: str) -> pd.DataFrame:
         5. Transposes the processed data and removes the index column.
 
         Parameters:
-        path : str
+        paths : str
             The file path of the dataset to be loaded. The function supports `.xlsx` and `.csv` formats.
 
         Returns:
@@ -43,7 +44,7 @@ def model_ONE_data(path: str) -> pd.DataFrame:
     # Iterating over the data rows.
     for i in range(data.shape[0]):
         # If the cell is not a null value is considered as a valid title.
-        if data.iloc[i, 0] is not np.nan:
+        if pd.notna(data.iloc[i, 0]):
             raw_column_name = data.iloc[i, 0]
         
         # Creating the column name.
@@ -84,7 +85,7 @@ def model_ONE_data(path: str) -> pd.DataFrame:
     
     return data
 
-def model_CNSS_data(*kargs) -> pd.DataFrame:
+def model_CNSS_data(paths: List[str]) -> pd.DataFrame:
     """
         Processes multiple Excel or CSV files containing CNSS data, standardizes column names, merges them, 
         and extracts year and month information.
@@ -116,7 +117,7 @@ def model_CNSS_data(*kargs) -> pd.DataFrame:
     processed_dataframes = []
     
     # Reading and appending all dataframes.
-    for path in kargs[0]:
+    for path in paths:
         try:
             data = pd.read_excel(path, engine='openpyxl')
         except ValueError:
