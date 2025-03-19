@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from typing import List
+import os
 
 def model_ONE_data(path: str) -> pd.DataFrame:
     """
@@ -193,7 +194,7 @@ def model_all_data() -> dict:
 
     return data_modeled
 
-    def save_the_data() -> None:
+def save_the_data() -> None:
     """
         Saves modeled data into CSV files organized by institution.
 
@@ -223,17 +224,4 @@ def model_all_data() -> dict:
             i += 1
 
 if __name__ == '__main__':
-    ONE_data_path = 'data/Raw Data/afiliados-número-cápitas-cápitas-pagadas-sfs-según-régimen-2005-2023.xlsx'
-    
-    data = model_ONE_data(ONE_data_path)
-
-    print(data)
-
-    CNSS_data_paths = [
-        'data/Raw Data/Excel-–-Regimen-Contributivo-Recaudos-y-Pagos-Seguro-Familiar-de-Salud-Seguros-Julio-2003-a-Noviembre-2024.xlsx',
-        'data/Raw Data/Excel-–-Regimen-Subsidiado-Aportes-Pagos-Seguro-Familiar-de-Salud-Enero-2004-octubre-2024-a-Noviembre-2024-1.xlsx'
-        ]
-    
-    data = model_CNSS_data(CNSS_data_paths)
-
-    print(data)
+    save_the_data()
