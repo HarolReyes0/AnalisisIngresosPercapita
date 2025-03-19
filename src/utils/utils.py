@@ -167,8 +167,8 @@ def model_all_data() -> dict:
 
         Returns:
             dict: A dictionary containing the modeled data for 'ONE' and 'CNSS'. 
-                - 'ONE': A list of modeled data from individual files in the '../data/raw/one' directory.
-                - 'CNSS': A single entry containing the modeled data from the '../data/raw/cnss' directory.
+                - 'ONE': A list of modeled data from individual files in the 'data/raw/one' directory.
+                - 'CNSS': A single entry containing the modeled data from the 'data/raw/cnss' directory.
 
     """
     data_modeled = {
@@ -178,8 +178,8 @@ def model_all_data() -> dict:
 
     # Obtaining all data paths.
     paths = {
-    'ONE': [os.path.join('../data/raw/one', path) for path in os.listdir('../data/raw/one')],
-    'CNSS': [os.path.join('../data/raw/cnss', path) for path in os.listdir('../data/raw/cnss')],
+    'ONE': [os.path.join('data/raw/one', path) for path in os.listdir('data/raw/one')],
+    'CNSS': [os.path.join('data/raw/cnss', path) for path in os.listdir('data/raw/cnss')],
     }
 
     # Modeling all data from the ONE.
