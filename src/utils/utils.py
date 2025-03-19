@@ -214,12 +214,12 @@ def model_all_data() -> dict:
         i = 0
 
         # Creating the file directory where the data will be stored if there's not any.
-        if institution.lower() not in os.listdir('../data/processed'):
+        if institution.lower() not in os.listdir('data/processed'):
             os.mkdir(os.path.join('../data/processed', institution.lower()))
         
         # Saving the data in its directory.
         for dataframe in dataframes:
-            dataframe.to_csv(f'../data/processed/{institution.lower()}/{institution.lower()} {i}.csv')
+            dataframe.to_csv(f'data/processed/{institution.lower()}/{institution.lower()} {i}.csv')
             i += 1
 
 if __name__ == '__main__':
