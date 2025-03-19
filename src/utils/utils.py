@@ -153,6 +153,42 @@ def model_CNSS_data(paths: List[str]) -> pd.DataFrame:
     
     return data
 
+def model_all_data() -> dict:
+    """
+        Models data from multiple sources and returns a structured dictionary.
+
+        This function retrieves raw data files from predefined directories ('ONE' and 'CNSS'), 
+        processes them using respective modeling functions (`model_ONE_data` and `model_CNSS_data`), 
+        and returns the structured data.
+
+        Returns:
+            dict: A dictionary containing the modeled data for 'ONE' and 'CNSS'. 
+                - 'ONE': A list of modeled data from individual files in the '../data/raw/one' directory.
+                - 'CNSS': A single entry containing the modeled data from the '../data/raw/cnss' directory.
+
+    """
+    data_modeled = {
+    'ONE' : [],
+    'CNSS' : [],
+    }
+
+    # Obtaining all data paths.
+    paths = {
+    'ONE': [os.path.join('../data/raw/one', path) for path in os.listdir('../data/raw/one')],
+    'CNSS': [os.path.join('../data/raw/cnss', path) for path in os.listdir('../data/raw/cnss')],
+    }
+
+    # Modeling all data from the ONE.
+    for path in paths.get('ONE'):
+        data = model_ONE_data(path)
+
+        data_modeled.get('ONE').append(data)
+    
+    # Modeling all data from CNSS.
+    data_modeled.get('CNSS').append(model_CNSS_data(paths['CNSS']))
+
+    return data_modeled
+
 if __name__ == '__main__':
     ONE_data_path = 'data/Raw Data/afiliados-número-cápitas-cápitas-pagadas-sfs-según-régimen-2005-2023.xlsx'
     
