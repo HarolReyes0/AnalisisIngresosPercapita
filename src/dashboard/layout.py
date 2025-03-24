@@ -4,6 +4,7 @@ import pandas as pd
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import load_figure_template
 from charts import *
+from dash.dependencies import Input, Output
 
 
 def load_data():
@@ -36,32 +37,9 @@ def load_data():
     pd.options.display.float_format = '{:.2f}'.format
 
     # Obtaining the list of available years.
-    available_years = {(x) for df in [one0, one1, one2] for x in df['año'].unique().tolist()}
+    available_years = {int(x) for df in [one0, one1, one2] for x in df['año'].unique().tolist()}
 
-def create_charts(filter_: str, years: list) -> None:
-    """
-        Generates a collection of charts based on provided filter and years.
 
-        This function creates multiple visualizations using pre-loaded datasets (`one0`, `one1`, `one2`)
-        and a the typer of regime and list of years. Each chart corresponds to a specific aspect of the data.
-
-        Parameters:
-        - filter_ (str): A string filter used to segment or filter the data.
-        - years (list): A list of years (int) used to filter the data before generating the charts.
-
-        Returns:
-        - tuple: A tuple containing the generated figures in the following order.
-    """
-    # Constructing all charts.
-    figs = (
-        cust_amt_per_capitation_type(one0, filter_, years),
-        amt_capitation_paid_per_cust_type(one0, filter_, years),
-        amt_capitation_per_gender(one1, filter_, years),
-        capitation_amt_per_cust_type(one2, years),
-        pct_money_per_cust_type(one2, years),
-    )
-
-    return figs
 
 def show_dashboard():
     # Creating the dashboard layout.
@@ -78,7 +56,7 @@ def show_dashboard():
                     dbc.Col([
                         # Creating a slicer to filter the years.
                         html.H1("Año"),
-                        dcc.Slider(
+                        dcc.RangeSlider(
                             id='YearPicker',
                             min=min(available_years),
                             max=max(available_years),
@@ -108,9 +86,49 @@ def show_dashboard():
         dcc.Graph(id='MoneyCollectedPerCustType')
     ])
 
+    @app.callback(
+            [
+                Output('AffiliatePerYear', 'figure'), 
+                Output('CapitalizationPerCustType', 'figure'), 
+                Output('CapitalizationPerGender', 'figure'), 
+                Output('AmtCapitationsPerCustType', 'figure'),
+                Output('MoneyCollectedPerCustType', 'figure')
+            ],
+            [
+                Input('RegimeType', 'value'),
+                Input('YearPicker', 'value'),
+            ]
+    )
+    def create_charts(filter_: str, years: list) -> None:
+        """
+            Generates a collection of charts based on provided filter and years.
+
+            This function creates multiple visualizations using pre-loaded datasets (`one0`, `one1`, `one2`)
+            and a the typer of regime and list of years. Each chart corresponds to a specific aspect of the data.
+
+            Parameters:
+            - filter_ (str): A string filter used to segment or filter the data.
+            - years (list): A list of years (int) used to filter the data before generating the charts.
+
+            Returns:
+            - tuple: A tuple containing the generated figures in the following order.
+        """
+        # Creating the range of years.
+        years = [year for year in range(int(years[0]), int(years[1]) + 1, 1)]
+
+        # Constructing all charts.
+        figs = (
+            cust_amt_per_capitation_type(one0, filter_, years),
+            amt_capitation_paid_per_cust_type(one0, filter_, years),
+            amt_capitation_per_gender(one1, filter_, years),
+            capitation_amt_per_cust_type(one2, years),
+            pct_money_per_cust_type(one2, years),
+        )
+
+        return figs
+
     app.run(jupyter_mode='tab', port=8071)
 
 if __name__ == '__main__':
     load_data()
     show_dashboard()
-    create_charts('', [])
