@@ -36,6 +36,10 @@ def cust_amt_per_capitation_type(data: pd.DataFrame, filter_: str, years=[]) -> 
     # Raising an error if the years selected are not found.
     if not any(data['año'].isin(years)) and len(years) > 0:
         raise ValueError('years entered not found in the data.')
+    
+    # Filtering the data by selected years if year is in the data.
+    if set(set(years)).issubset(data['año']) and len(years) > 0:
+        data = data.loc[data['año'].isin(years)]
 
     # Data filters.
     default_filter = ['afiliados (total)', 'afiliados (subsidiado)', 'afiliados (contributivo)']
