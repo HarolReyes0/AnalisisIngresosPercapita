@@ -66,7 +66,7 @@ def show_dashboard():
             ]),
             # Radio buttons to filter the regime type.
             dbc.Col([
-                html.H1('Tipo de Afiliado'),
+                html.H1('Tipo de Regimen'),
                 dcc.RadioItems(
                     id='RegimeType',
                     options=[
