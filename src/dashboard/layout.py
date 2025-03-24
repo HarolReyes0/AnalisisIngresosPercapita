@@ -6,7 +6,6 @@ from dash_bootstrap_templates import load_figure_template
 from charts import *
 from dash.dependencies import Input, Output
 
-
 def load_data():
     """
         Loads and processes Excel datasets from predefined file paths, and sets global variables.
@@ -30,9 +29,9 @@ def load_data():
     global one0, one1, one2, available_years
 
     # Reading all files
-    one0 = pd.read_excel('../../data/processed/one/one 0.xlsx')
-    one1 = pd.read_excel('../../data/processed/one/one 1.xlsx')
-    one2 = pd.read_excel('../../data/processed/one/one 2.xlsx')
+    one0 = pd.read_excel('data/processed/one/one 0.xlsx')
+    one1 = pd.read_excel('data/processed/one/one 1.xlsx')
+    one2 = pd.read_excel('data/processed/one/one 2.xlsx')
     
     pd.options.display.float_format = '{:.2f}'.format
 
@@ -49,41 +48,61 @@ def show_dashboard():
 
     app = Dash(__name__, external_stylesheets=[dbc.themes.COSMO, dbc_css])
 
-    app.layout = html.Div([
+    app.layout = dbc.Container([
         html.H1('Ingresos por Capitas'),
-            dbc.Row([
-                dbc.Card([
-                    dbc.Col([
-                        # Creating a slicer to filter the years.
-                        html.H1("Año"),
-                        dcc.RangeSlider(
-                            id='YearPicker',
-                            min=min(available_years),
-                            max=max(available_years),
-                            step=1,
-                            value=[],
-                            # show marks every 2 years
-                            marks={year: str(year) for year in available_years if year % 2 == 0}
-                        ),  
-                    ], width=5),
-                    dbc.Col([
-                        # Creating a dropdown to filter the regime type.
-                        html.H1('Tipo de Afiliado'),
-                        dcc.RadioItems(
-                            id='RegimeType',
-                            options=['Subsidiado', 'Contributivo', 'Todos'],
-                            value='todos'
-                        ),
-                    ]),
-                ])
+        # Slicer to filter the years.
+        dbc.Row([
+            dbc.Col([
+                html.H1("Año"),
+                dcc.RangeSlider(
+                    id='YearPicker',
+                    min=min(available_years),
+                    max=max(available_years),
+                    step=1,
+                    value=[min(available_years), max(available_years)],
+                    # show marks every 2 years
+                    marks={year: str(year) for year in available_years if year % 2 == 0}
+                ), 
+            ]),
+            # Radio buttons to filter the regime type.
+            dbc.Col([
+                html.H1('Tipo de Afiliado'),
+                dcc.RadioItems(
+                    id='RegimeType',
+                    options=[
+                        {'label': 'Subsidiado', 'value': 'Subsidiado'},
+                        {'label': 'Contributivo', 'value': 'Contributivo'},
+                        {'label': 'Todos', 'value': 'Todos'}
+                    ],
+                    value='Todos',
+                    labelStyle={
+                        'display': 'inline-block',
+                        'margin-right': '15px',
+                    }
+                ),
+            ])
         ]),
-        
         # Adding charts
-        dcc.Graph(id='AffiliatePerYear'),
-        dcc.Graph(id='CapitalizationPerCustType'),
-        dcc.Graph(id='CapitalizationPerGender'),
-        dcc.Graph(id='AmtCapitationsPerCustType'),
-        dcc.Graph(id='MoneyCollectedPerCustType')
+        dbc.Row([
+            dcc.Graph(id='AffiliatePerYear'),
+            # Creating rows and columns to separate the charts.
+            dbc.Row([
+                dbc.Col([
+                    dcc.Graph(id='CapitalizationPerCustType'),
+                ]),
+                dbc.Col([
+                    dcc.Graph(id='CapitalizationPerGender'),
+                ]),
+            ]),
+            dbc.Row([
+                dbc.Col([
+                    dcc.Graph(id='AmtCapitationsPerCustType'),
+                ]),
+                dbc.Col(
+                    dcc.Graph(id='MoneyCollectedPerCustType')
+                )
+            ]),
+        ]),
     ])
 
     @app.callback(
