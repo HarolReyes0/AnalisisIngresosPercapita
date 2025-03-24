@@ -1,3 +1,7 @@
+import pandas as pd
+import plotly.graph_objects as go
+import plotly.express as px
+
 def cust_amt_per_capitation_type(data: pd.DataFrame, filter_: str, years=[]) -> go.Figure:
     """
         Generates a line plot showing customer amounts based on capitation type over specified years.
