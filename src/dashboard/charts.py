@@ -223,22 +223,14 @@ def capitation_amt_per_cust_type(data: pd.DataFrame, years=[]) -> go.Figure:
     if type(years) is not list:
         raise ValueError('years must be a list.')
     
-    # Raising an error if the years selected are not found.
-    if not any(data['año'].isin(years)) and len(years) > 0:
-        raise ValueError('years entered not found in the data.')
-
-    # Filtering the data by selected years if year is in the data.
-    if set(set(years)).issubset(data['año']) and len(years) > 0:
-        data = data.loc[data['año'].isin(years)]
-        data = data.loc[data['meses'].str.strip() == 'Diciembre', :]
-    
-    # Filtering by last period recorded in case that no year was selected.  
-    elif len(years) == 0:
-        data = data.loc[data['meses'].str.strip() == 'Diciembre', :]
+    if len(years) == 1 and not any(data['año'].isin(years)):
+        raise(ValueError('Year not found in the data.'))
 
     # If only one year was selected, filtering the data by month.
     if len(years) == 1:
         x_axis = 'meses'
+        # Filtering by the selected year.
+        data = data.loc[data['año'].isin(years)]
         # Standardizing months names. 
         data['meses'] = data['meses'].str.strip().str.lower()
         # Mapping the months to numbers.
@@ -246,6 +238,15 @@ def capitation_amt_per_cust_type(data: pd.DataFrame, years=[]) -> go.Figure:
 
         # Sorting the months in ascending order.
         data.sort_values(by='meses_n')
+    else:
+        data = data.loc[data['meses'].str.strip() == 'Diciembre', :]
+
+        # Filtering the years selected only by the ones found in the data.
+        if not any(data['año'].isin(years)) and len(years) > 0:
+            years = list(set(data['año'].tolist()).intersection(set(years)))
+            print(years)
+        
+        data = data.loc[data['año'].isin(years)]
     
     # Data filters.
     default_filter = [' número de cápitas dispersadas(total)', ' número de cápitas dispersadas (titulares)', ' número de cápitas dispersadas (dependientes directos)',
