@@ -42,23 +42,33 @@ def cust_amt_per_capitation_type(data: pd.DataFrame, filter_: str, years=[]) -> 
         data = data.loc[data['año'].isin(years)]
 
     # Data filters.
-    default_filter = ['afiliados (total)', 'afiliados (subsidiado)', 'afiliados (contributivo)']
+    default_filter = {
+        'afiliados (total)': 'Todos',
+        'afiliados (subsidiado)': 'Subsidiado',
+        'afiliados (contributivo)': 'Contributivo'
+    }
     filters = {
-        'Subsidiado' : ['afiliados (subsidiado)'],
-        'Contributivo' : ['afiliados (contributivo)'],
+        'Subsidiado' : {'afiliados (subsidiado)': 'Subsidiado'},
+        'Contributivo' : {'afiliados (contributivo)': 'Contributivo'},
     }
 
     # Selecting the data that will be used as y axis.
-    y_axis_data = filters.get(filter_, default_filter)
+    axis_and_labels = filters.get(filter_, default_filter)
 
     # Plotting the data.
     fig = px.line(
         data_frame = data,
         x = 'año',
-        y = y_axis_data,
-        markers=True
+        y = list(axis_and_labels.keys()),
+        markers=True,
+        title='Cantidad de Afiliados',
+        labels={'value': '', 'variable':'Tipo de Regimen'}
     )
 
+    # Updating the legend.
+    fig.for_each_trace(
+        lambda t: t.update(name=axis_and_labels.get(t.name, t.name))
+    )
     return fig
 
 def amt_capitation_paid_per_cust_type(data: pd.DataFrame, filter_: str, years=[]) -> go.Figure:
