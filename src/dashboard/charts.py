@@ -95,6 +95,10 @@ def amt_capitation_paid_per_cust_type(data: pd.DataFrame, filter_: str, years=[]
     # Raising an error if the years selected are not found.
     if not any(data['año'].isin(years)) and len(years) > 0:
         raise ValueError('years entered not found in the data.')
+
+    # Filtering the data by selected years if year is in the data.
+    if set(set(years)).issubset(data['año']) and len(years) > 0:
+        data = data.loc[data['año'].isin(years)]
     
     # Data filters.
     default_filter = ['numero de cápitas pagadas (subsidiado)', 'numero de cápitas pagadas (contributivo)']
@@ -150,6 +154,10 @@ def amt_capitation_per_gender(data: pd.DataFrame, filter_: str, years=[]) -> go.
     # Raising an error if the years selected are not found.
     if not any(data['año'].isin(years)) and len(years) > 0:
         raise ValueError('years entered not found in the data.')
+    
+    # Filtering the data by selected years if year is in the data.
+    if set(set(years)).issubset(data['año']) and len(years) > 0:
+        data = data.loc[data['año'].isin(years)]
     
     # Data filters.
     default_filter = ['total  (hombres)', 'total  (mujeres)']
