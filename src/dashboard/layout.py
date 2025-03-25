@@ -49,7 +49,6 @@ def show_dashboard():
     app = Dash(__name__, external_stylesheets=[dbc.themes.COSMO, dbc_css])
 
     app.layout = dbc.Container([
-        html.H1('Ingresos por Capitas'),
         # Slicer to filter the years.
         dbc.Row([
             dbc.Col([
