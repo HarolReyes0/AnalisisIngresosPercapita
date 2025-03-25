@@ -36,9 +36,9 @@ class ModelData:
 
         # Finding the start of our data.
         try:
-            index_ = list(data.iloc[:,0].str.lower()).index('años')
+            index_ = list(data.iloc[:,0].str.lower().str.strip()).index('años')
         except ValueError:
-            index_ = list(data.iloc[:,0].str.lower()).index('año')
+            index_ = list(data.iloc[:,0].str.lower().str.strip()).index('año')
 
         # Filtering the unwanted rows
         data = data.iloc[index_:-3]
@@ -77,10 +77,11 @@ class ModelData:
         data = data[(data.iloc[:, 1].str.strip() == 'Cuarto trimestre') | (data.iloc[:, 1].isna())]
 
         # Dropping unwanted columns
-        try:
-            data.drop('Años (nan) 1', axis=1, inplace=True)
-        except KeyError:
-            data.drop('Año (nan) 1', axis=1, inplace=True)
+        if any(['Años (nan) 1' == column or 'Año (nan) 1' == column for column in data.columns]):
+            try:
+                data.drop('Años (nan) 1', axis=1, inplace=True)
+            except KeyError:
+                data.drop('Año (nan) 1', axis=1, inplace=True)
 
         # Cleaning extra characters.
         data.iloc[:, 0] = data.iloc[:, 0].astype(str).str.replace('*', '', regex=False).astype(float)
