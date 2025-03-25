@@ -180,21 +180,30 @@ def amt_capitation_per_gender(data: pd.DataFrame, filter_: str, years=[]) -> go.
         data = data.loc[data['año'].isin(years)]
     
     # Data filters.
-    default_filter = ['total  (hombres)', 'total  (mujeres)']
+    default_filter = {
+        'total  (hombres)': 'Hombres',
+        'total  (mujeres)': 'Mujeres'
+    }
     filters = {
-        'Subsidiado' : ['régimen subsidiado (hombres )', 'régimen subsidiado (mujeres )'],
-        'Contributivo' : ['régimen contributivo (hombres )', 'régimen contributivo (mujeres )'],
+        'Subsidiado' : {'régimen subsidiado (hombres )': 'Hombres', 'régimen subsidiado (mujeres )': 'Mujeres',},
+        'Contributivo' : {'régimen contributivo (hombres )': 'Hombres', 'régimen contributivo (mujeres )': 'Mujeres',},
     }
 
     # Selecting the data that will be used as y axis.
-    y_axis_data = filters.get(filter_, default_filter)
+    axis_and_labels = filters.get(filter_, default_filter)
 
     # Plotting the data.
     fig = px.bar(
         data,
         x='año',
-        y=y_axis_data,
-        barmode='group'
+        y=list(axis_and_labels.keys()),
+        barmode='group',
+        title=f'Capitas Dispersadas por Genero',
+        labels={'value':'', 'variable':'Genero'}
+    )
+    # Updating the legend.
+    fig.for_each_trace(
+        lambda t: t.update(name=axis_and_labels.get(t.name, t.name))
     )
 
     return fig
