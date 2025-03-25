@@ -111,20 +111,30 @@ def amt_capitation_paid_per_cust_type(data: pd.DataFrame, filter_: str, years=[]
         data = data.loc[data['año'].isin(years)]
     
     # Data filters.
-    default_filter = ['numero de cápitas pagadas (subsidiado)', 'numero de cápitas pagadas (contributivo)']
+    default_filter = {
+        'numero de cápitas pagadas (subsidiado)': 'Subsidiado',
+        'numero de cápitas pagadas (contributivo)': 'Contributivo'
+    }
     filters = {
-        'Subsidiado' : ['numero de cápitas pagadas (subsidiado)'],
-        'Contributivo' : ['numero de cápitas pagadas (contributivo)'],
+        'Subsidiado' : {'numero de cápitas pagadas (subsidiado)': 'Subsidiado'},
+        'Contributivo' : {'numero de cápitas pagadas (contributivo)': 'Contributivo'},
     }
 
     # Selecting the data that will be used as y axis.
-    y_axis_data = filters.get(filter_, default_filter)
+    axis_and_labels = filters.get(filter_, default_filter)
 
     # Plotting the data.
     fig = px.bar(
         data,
         x='año',
-        y= y_axis_data,
+        y= list(axis_and_labels.keys()),
+        title='Numero de cápitas pagadas',
+        labels={'value': '', 'variable':'Tipo de Regimen'}
+    )
+
+    # Updating the legend.
+    fig.for_each_trace(
+        lambda t: t.update(name=axis_and_labels.get(t.name, t.name))
     )
 
     return fig
