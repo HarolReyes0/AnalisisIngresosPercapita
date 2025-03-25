@@ -278,20 +278,31 @@ def capitation_amt_per_cust_type(data: pd.DataFrame, years=[]) -> go.Figure:
         data = data.loc[data['año'].isin(years)]
     
     # Data filters.
-    default_filter = [' número de cápitas dispersadas(total)', ' número de cápitas dispersadas (titulares)', ' número de cápitas dispersadas (dependientes directos)',
-        ' número de cápitas dispersadas (dependientes adicionales)']
+    default_filter = {
+        ' número de cápitas dispersadas(total)': 'Total',
+        ' número de cápitas dispersadas (titulares)': 'Titulares',
+        ' número de cápitas dispersadas (dependientes directos)': 'Dependientes directos',
+        ' número de cápitas dispersadas (dependientes adicionales)': 'Dependientes adicionales'
+    }
     filters = {
     }
 
     # Selecting the data that will be used as y axis.
-    y_axis_data = filters.get('', default_filter)
+    axis_and_labels = filters.get('', default_filter)
 
     # Plotting the data.
     fig = px.line(
         data_frame = data,
         x = x_axis,
-        y = y_axis_data,
-        markers=True
+        y = list(axis_and_labels.keys()),
+        markers=True,
+        title=f'Número de Cápitas Dispersadas',
+        labels={'value':'', 'variable':'Categoria'}
+    )
+
+    # Updating the legend.
+    fig.for_each_trace(
+        lambda t: t.update(name=axis_and_labels.get(t.name, t.name))
     )
 
     return fig
@@ -353,14 +364,27 @@ def pct_money_per_cust_type(data: pd.DataFrame, years=[]) -> go.Figure:
 
     data['año'] = data['año'].astype('str')
 
+    labels = {
+        'total de monto dispersado RD$ (titulares) %': 'Titulares',
+        'total de monto dispersado RD$ (dependientes directos) %': 'Dependientes directos',
+        'total de monto dispersado RD$ (dependientes adicionales) %': 'Dependientes adicionales'
+    }
+
     # Creating the figure.
     fig = px.bar(
-    data,
-    y='año',
-    x=['total de monto dispersado RD$ (titulares) %',
-    'total de monto dispersado RD$ (dependientes directos) %',
-    'total de monto dispersado RD$ (dependientes adicionales) %'],
-       barmode='stack',
+        data,
+        y='año',
+        x=['total de monto dispersado RD$ (titulares) %',
+            'total de monto dispersado RD$ (dependientes directos) %',
+            'total de monto dispersado RD$ (dependientes adicionales) %'],
+        barmode='stack',
+        title=f'% Monto Dispersado',
+        labels={'value':'', 'variable':'Categoria'}
+    )
+
+    # Updating the legend.
+    fig.for_each_trace(
+        lambda t: t.update(name=labels.get(t.name, t.name))
     )
 
     return fig
