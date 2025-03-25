@@ -228,3 +228,7 @@ class ModelData:
 if __name__ == '__main__':
     model = ModelData()
     model.model_and_save_data()
+
+    # data = model._model_ONE_data('data/raw/one/afiliados-seguro-familiar-salud-régimen-sexo-año-2007-2023 (ONE).xlsx')
+
+    # print(data.columns)
